@@ -1,17 +1,28 @@
 {
 	"info": {
-		"_postman_id": "3dc3793d-b9a6-443a-9e25-37c5c539dad5",
+		"_postman_id": "94ee0829-619a-4525-8ce7-76fea9185bc2",
 		"name": "Homble Backend Assessment",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "16443486",
-		"_collection_link": "https://myjaxy.postman.co/workspace/b0868cdd-6095-4277-af34-8e4538a7f871/collection/16443486-3dc3793d-b9a6-443a-9e25-37c5c539dad5?action=share&source=collection_link&creator=16443486"
+		"_exporter_id": "27498480"
 	},
 	"item": [
 		{
 			"name": "Products list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "localhost:8000/products/",
 					"host": [
@@ -20,6 +31,25 @@
 					"port": "8000",
 					"path": [
 						"products",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/categories/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"categories",
 						""
 					]
 				}
