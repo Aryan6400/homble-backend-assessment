@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 
 class Product(models.Model):
@@ -13,10 +14,6 @@ class Product(models.Model):
         max_length=150,
         unique=True,
         help_text=_("This will be displayed to user as-is"),
-    )
-    price = models.PositiveSmallIntegerField(
-        _("selling price (Rs.)"),
-        help_text=_("Price payable by customer (Rs.)"),
     )
     description = models.TextField(
         _("descriptive write-up"),
@@ -56,7 +53,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} (Rs. {self.price})"
+        return f"{self.name}"
 
     class Meta:
         # Just to be explicit.
@@ -64,3 +61,49 @@ class Product(models.Model):
         ordering = []
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+
+
+
+class SKU(models.Model):
+
+    product = models.ForeignKey(
+        "products.Product",
+        related_name="sku",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+    size = models.PositiveSmallIntegerField(
+        _("Size for the product(grams)"),
+        blank=True,
+    )
+    price = models.PositiveSmallIntegerField(
+        _("selling price (Rs.)"),
+        default=0,
+        help_text=_("Price payable by customer (Rs.)"),
+    )
+
+    def validate_unique(self, exclude=None):
+        if self.size is not None and self.product is not None:
+            queryset = SKU.objects.filter(product=self.product, size=self.size)
+            if self.pk:
+                queryset = queryset.exclude(pk=self.pk)
+            if queryset.exists():
+                raise ValidationError(
+                    {'size': _('Size must be unique for each product.')},
+                    code='unique_together',
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.product.name} (Rs. {self.price}/{self.size} grams)"
+
+    class Meta:
+        db_table = "sku"
+        ordering = []
+        verbose_name = "Store Keeping Unit"
+        verbose_name_plural = "Store Keeping Units"

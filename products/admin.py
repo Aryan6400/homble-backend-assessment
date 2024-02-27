@@ -1,16 +1,38 @@
 from django.contrib import admin
+from products.models import Product, SKU
 
-from products.models import Product
+
+@admin.register(SKU)
+class SKUAdmin(admin.ModelAdmin):
+    list_display = ("product", "size", "price")
+    ordering = ("-id",)
+    search_fields = ("product__name",) # To search SKUs based on product name
+    fields = (
+        ("product"),
+        ("size", "price"),
+    )
+    autocomplete_fields = ("product",)
+    readonly_fields = ("id",)
+
+class SKUInline(admin.StackedInline):
+    # For display in products admin
+    model = SKU
+    extra = 0
+    ordering = ("-id",)
+    readonly_fields = ("size", "price")
+    fields = (readonly_fields,)
+    show_change_link = True
+
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "managed_by", "ingredients")
+    list_display = ("name", "managed_by", "ingredients")
     ordering = ("-id",)
     search_fields = ("name",)
     list_filter = ("is_refrigerated", "category")
     fields = (
-        ("name", "price"),
+        ("name"),
         ("category", "is_refrigerated"),
         "description",
         ("id", "created_at", "edited_at"),
@@ -18,16 +40,15 @@ class ProductAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ("category", "managed_by")
     readonly_fields = ("id", "created_at", "edited_at")
+    inlines=(SKUInline,)
 
 
 class ProductInline(admin.StackedInline):
-    """
-    For display in CategoryAdmin
-    """
-
+    # For display in CategoryAdmin
     model = Product
     extra = 0
     ordering = ("-id",)
-    readonly_fields = ("name", "price", "is_refrigerated")
+    readonly_fields = ("name", "is_refrigerated")
     fields = (readonly_fields,)
     show_change_link = True
+
