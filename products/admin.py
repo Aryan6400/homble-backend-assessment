@@ -4,12 +4,12 @@ from products.models import Product, SKU
 
 @admin.register(SKU)
 class SKUAdmin(admin.ModelAdmin):
-    list_display = ("product", "size", "price")
+    list_display = ("product", "size", "selling_price")
     ordering = ("-id",)
     search_fields = ("product__name",) # To search SKUs based on product name
     fields = (
-        ("product"),
-        ("size", "price"),
+        ("product","size"),
+        ("cost_price", "platform_commission"),
     )
     autocomplete_fields = ("product",)
     readonly_fields = ("id",)
@@ -19,8 +19,11 @@ class SKUInline(admin.StackedInline):
     model = SKU
     extra = 0
     ordering = ("-id",)
-    readonly_fields = ("size", "price")
-    fields = (readonly_fields,)
+    readonly_fields = ("size", "selling_price")
+    fields = (
+        (readonly_fields),
+        ("cost_price", "platform_commission")
+    )
     show_change_link = True
 
 

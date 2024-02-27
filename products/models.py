@@ -78,10 +78,20 @@ class SKU(models.Model):
         _("Size for the product(grams)"),
         blank=True,
     )
-    price = models.PositiveSmallIntegerField(
+    selling_price = models.PositiveSmallIntegerField(
         _("selling price (Rs.)"),
         default=0,
         help_text=_("Price payable by customer (Rs.)"),
+    )
+    cost_price = models.PositiveSmallIntegerField(
+        _("Cost price (Rs.)"),
+        default=0,
+        help_text=_("Cost Price of the product (Rs.)"),
+    )
+    platform_commission = models.PositiveSmallIntegerField(
+        _("Platform price (Rs.)"),
+        default=0,
+        help_text=_("Price incurred on the platform (Rs.)"),
     )
 
     def validate_unique(self, exclude=None):
@@ -97,10 +107,11 @@ class SKU(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
+        self.selling_price=self.cost_price+self.platform_commission
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.product.name} (Rs. {self.price}/{self.size} grams)"
+        return f"{self.product.name} (Rs. {self.selling_price}/{self.size} grams)"
 
     class Meta:
         db_table = "sku"
