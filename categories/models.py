@@ -9,6 +9,7 @@ class Category(models.Model):
 
     name = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
+    count_products=models.IntegerField(default=0)
 
     def __str__(self):
         if self.is_active:
