@@ -5,7 +5,7 @@ from products.models import Product
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "managed_by")
+    list_display = ("name", "price", "managed_by", "ingredients")
     ordering = ("-id",)
     search_fields = ("name",)
     list_filter = ("is_refrigerated", "category")
@@ -13,11 +13,11 @@ class ProductAdmin(admin.ModelAdmin):
         ("name", "price"),
         ("category", "is_refrigerated"),
         "description",
-        ("id", "created_at"),
-        "managed_by",
+        ("id", "created_at", "edited_at"),
+        ("ingredients", "managed_by"),
     )
     autocomplete_fields = ("category", "managed_by")
-    readonly_fields = ("id", "created_at")
+    readonly_fields = ("id", "created_at", "edited_at")
 
 
 class ProductInline(admin.StackedInline):
